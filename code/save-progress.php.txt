@@ -1,0 +1,49 @@
+<?php
+/**
+ * Save a user's game progress and record a leaderboard score.
+ * Sanitised example from A Hole Lotta Fun.
+ */
+
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/games.php';
+header('Content-Type: application/json');
+
+$user_id = get_user_id();
+if (!$user_id) {
+    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    exit();
+}
+
+$input = json_decode(file_get_contents('php://input'), true);
+$game_key = trim($input['game_key'] ?? '');
+$progress = $input['progress'] ?? null;
+$games = ahlf_games();
+
+if (!$game_key || !isset($games[$game_key]) || !is_array($progress)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid payload']);
+    exit();
+}
+
+$progress_json = json_encode($progress);
+$stmt = $conn->prepare(
+    'INSERT INTO game_progress (user_id, game_key, progress) VALUES (?, ?, ?)
+     ON DUPLICATE KEY UPDATE progress = VALUES(progress), updated_at = CURRENT_TIMESTAMP'
+);
+$stmt->bind_param('iss', $user_id, $game_key, $progress_json);
+$stmt->execute();
+$stmt->close();
+
+$score = isset($progress['score']) && is_numeric($progress['score'])
+    ? (int) round((float) $progress['score'])
+    : 0;
+
+if ($score > 0) {
+    $insert = $conn->prepare(
+        'INSERT INTO world_high_list (game_key, score, user_id) VALUES (?, ?, ?)'
+    );
+    $insert->bind_param('sii', $game_key, $score, $user_id);
+    $insert->execute();
+    $insert->close();
+}
+
+echo json_encode(['success' => true]);
