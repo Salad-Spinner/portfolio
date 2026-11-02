@@ -115,14 +115,10 @@
     box-shadow: 0 0 24px rgba(0, 255, 159, 0.28);
   }
 
-  .brand-text { font-size: 1.02rem; }
-  .brand-text em {
-    font-style: normal;
-    color: var(--muted);
-    font-weight: 500;
-    font-size: 0.82rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  .brand-logo {
+    display: block;
+    width: auto;
+    height: 3rem;
   }
 
   .topnav {
@@ -591,86 +587,6 @@
   .card-links a:hover { text-decoration: underline; }
   .card-links a svg { width: 13px; height: 13px; }
 
-  .code-section { padding-top: 2rem; }
-
-  .code-window {
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: #080a0f;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-  }
-
-  .code-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.7rem 1rem;
-    background: #0d1016;
-    border-bottom: 1px solid var(--line);
-    overflow-x: auto;
-  }
-
-  .dots { display: flex; gap: 0.4rem; flex-shrink: 0; }
-  .dots i { width: 10px; height: 10px; border-radius: 50%; background: #2a3242; display: block; }
-  .dots i:first-child { background: #ff5f57; }
-  .dots i:nth-child(2) { background: #febc2e; }
-  .dots i:nth-child(3) { background: #28c840; }
-
-  .code-tabs {
-    display: flex;
-    gap: 0.25rem;
-    margin-left: 0.4rem;
-  }
-
-  .code-tab {
-    padding: 0.38rem 0.75rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-
-  .code-tab:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
-
-  .code-tab.is-active {
-    color: var(--green);
-    background: rgba(0, 255, 159, 0.08);
-    border-color: rgba(0, 255, 159, 0.22);
-  }
-
-  .code-lang {
-    margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(243, 246, 251, 0.35);
-    flex-shrink: 0;
-  }
-
-  .code-panel { display: none; margin: 0; padding: 1.4rem 1.5rem; overflow-x: auto; }
-  .code-panel.is-active { display: block; }
-
-  .code-panel code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    line-height: 1.75;
-    color: #c9d4e3;
-    white-space: pre;
-  }
-
-  .code-panel .cmt { color: #5c6a7e; }
-  .code-panel .kw { color: #ff7ab2; }
-  .code-panel .fn { color: #7dd3fc; }
-  .code-panel .str { color: #a7f3d0; }
-  .code-panel .num { color: #fbbf24; }
-
   .demo-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -699,17 +615,7 @@
     user-select: none;
   }
 
-  .demo-stage canvas {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .constellation-stage { cursor: crosshair; }
-
-  .meteorco-stage iframe {
+  .demo-stage iframe {
     position: absolute;
     inset: 0;
     display: block;
@@ -737,6 +643,8 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
+
+  .demo-label--corner { left: auto; right: 1rem; }
 
   .demo-copy { padding: 1.1rem 1.2rem 1.25rem; }
 
@@ -773,165 +681,6 @@
 
   .demo-link:hover { text-decoration: underline; }
   .demo-link svg { width: 12px; height: 12px; }
-
-  .tilt-stage { perspective: 900px; }
-
-  .tilt-card {
-    position: relative;
-    width: min(72%, 280px);
-    padding: 1.55rem 1.4rem;
-    border: 1px solid rgba(0, 255, 159, 0.28);
-    border-radius: 20px;
-    background: linear-gradient(145deg, rgba(0, 255, 159, 0.16), rgba(34, 211, 238, 0.07) 55%, rgba(167, 139, 250, 0.12));
-    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.38);
-    overflow: hidden;
-    transform-style: preserve-3d;
-    transition: transform 0.15s ease;
-    will-change: transform;
-  }
-
-  .tilt-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.22), transparent 45%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-  }
-
-  .tilt-stage:hover .tilt-card::after { opacity: 1; }
-
-  .tilt-badge {
-    display: inline-block;
-    margin-bottom: 0.75rem;
-    padding: 0.22rem 0.55rem;
-    border: 1px solid rgba(0, 255, 159, 0.24);
-    border-radius: 999px;
-    background: rgba(0, 255, 159, 0.12);
-    color: var(--green);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-  }
-
-  .tilt-card h3 {
-    margin-bottom: 0.35rem;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.1rem;
-  }
-
-  .tilt-card p {
-    color: var(--muted);
-    font-size: 0.8rem;
-    line-height: 1.6;
-  }
-
-  .magnetic-stage { gap: 0.85rem; }
-
-  .magnetic-btn {
-    position: relative;
-    z-index: 2;
-    padding: 1rem 1.55rem;
-    border: 1px solid rgba(0, 255, 159, 0.35);
-    border-radius: 999px;
-    background: rgba(0, 255, 159, 0.1);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-    will-change: transform;
-  }
-
-  .magnetic-btn:hover {
-    background: rgba(0, 255, 159, 0.16);
-    box-shadow: 0 0 35px rgba(0, 255, 159, 0.22);
-  }
-
-  .demo-hint {
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .example-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 1.4rem;
-  }
-
-  .example-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.25rem;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
-    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-  }
-
-  .example-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(0, 255, 159, 0.32);
-    background: linear-gradient(180deg, rgba(0, 255, 159, 0.06), rgba(255, 255, 255, 0.015));
-  }
-
-  .file-type {
-    align-self: flex-start;
-    padding: 0.22rem 0.55rem;
-    border-radius: 999px;
-    background: rgba(0, 255, 159, 0.1);
-    border: 1px solid rgba(0, 255, 159, 0.24);
-    color: var(--green);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .example-card h3 {
-    margin: 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
-    color: var(--text);
-  }
-
-  .example-card p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.82rem;
-    line-height: 1.65;
-  }
-
-  .file-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: auto;
-    padding-top: 0.85rem;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
-  }
-
-  .file-meta span:last-child {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  .file-meta svg { width: 13px; height: 13px; }
 
   .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .reveal.in { opacity: 1; transform: none; }
@@ -980,7 +729,7 @@
     .wrap { width: calc(100% - 2rem); }
     .topbar-inner { height: 64px; gap: 0.5rem; }
     .brand { flex-shrink: 0; }
-    .brand-text em { display: none; }
+    .brand-logo { height: 1.55rem; }
     .topnav {
       gap: 0.2rem;
       min-width: 0;
@@ -999,12 +748,8 @@
     .work-grid { grid-template-columns: 1fr; }
     .cover, .card.featured .cover { height: 200px; }
     .section { padding: 3.8rem 0; }
-    .code-panel { padding: 1.1rem; }
-    .code-panel code { font-size: 0.72rem; }
-    .code-lang { display: none; }
     .demo-grid { grid-template-columns: 1fr; }
     .demo-stage { height: 230px; }
-    .example-grid { grid-template-columns: 1fr; }
     .site-footer-inner { align-items: flex-start; flex-direction: column; }
   }
 
@@ -1017,7 +762,6 @@
     .marquee-track { animation: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
     .card, .cover img { transition: none; }
-    .tilt-card, .magnetic-btn { transition: none; }
   }
 </style>
 </head>
@@ -1075,14 +819,12 @@
 <header class="topbar">
   <div class="wrap topbar-inner">
     <a class="brand" href="#top">
-      <span class="brand-mark">W</span>
-      <span class="brand-text">WAM <em>Studios</em></span>
+      <img class="brand-logo" src="image/WAM Logo TW.svg" alt="WAM Studios">
     </a>
     <nav class="topnav" aria-label="Main navigation">
       <a href="#top">Home</a>
       <a href="#work">Portfolio</a>
       <a href="#live">Demos</a>
-      <a href="#code" class="active">Code</a>
       <a href="https://github.com/Salad-Spinner" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </div>
@@ -1093,12 +835,11 @@
     <div class="hero-glow"></div>
     <div class="wrap">
       <p class="eyebrow"><span class="dot"></span> Developer portfolio · 2026</p>
-      <h1>Apps, websites,<br><span class="grad">hardware &amp; games.</span></h1>
-      <p class="lede">A tour through the things I have designed, coded and shipped — from a cross-platform notification engine and a full Android dialer, to a self-deploying print-on-demand store, a GPS smartwatch and a shelf of games.</p>
+      <h1>Apps + websites +<br><span class="grad">robots + games = fun</span></h1>
+      <p class="lede">A couple of things from my code collection.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#live">Try the live demos</a>
-        <a class="btn btn-ghost" href="#work">Browse the work</a>
-        <a class="btn btn-ghost" href="#code">See the code</a>
+        <a class="btn btn-primary" href="#live">Try some stuff</a>
+        <a class="btn btn-ghost" href="#work">See my work</a>
       </div>
       <dl class="stats">
         <div><dt>17</dt><dd>Projects</dd></div>
@@ -1119,10 +860,10 @@
   <section id="work" class="section wrap">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Selected work</p>
-        <h2>The greatest hits.</h2>
+        <p class="eyebrow">Personal Favorites</p>
+        <h2>My Stuff</h2>
       </div>
-      <p class="section-note">Filter by discipline. Every project here was designed, coded and shipped by me.</p>
+      <p class="section-note">Just to give you an idea on what I spend my weekends on....</p>
     </div>
 
     <div class="filters" role="group" aria-label="Filter projects">
@@ -1262,6 +1003,9 @@
             <li>Prepared statements, password hashing and sessions</li>
           </ul>
           <div class="tags"><span>PHP</span><span>MySQL</span><span>JavaScript</span><span>HTML / CSS</span></div>
+          <div class="card-links">
+            <a href="#live">Play two live games <svg><use href="#i-arrow"/></svg></a>
+          </div>
         </div>
       </article>
 
@@ -1440,14 +1184,17 @@
         </div>
         <div class="card-body">
           <p class="kicker">Browser extension</p>
-          <h3>Math Display Patch</h3>
-          <p>A Manifest V3 extension that rewrites calculator output in real time, using a TreeWalker plus MutationObserver to catch text nodes and canvas updates.</p>
+          <h3>2+2=5 Calculator Prank</h3>
+          <p>Replaces the number 4 in the google calculator with “TOTALLY 5”, just to mess with people.</p>
           <ul class="highlights">
-            <li>MutationObserver catches live results</li>
-            <li>Works across arbitrary calculator sites</li>
-            <li>Manifest V3 and Firefox-compatible manifest</li>
+            <li>Replaces text live</li>
+            <li>Works across all google calculators (even when reloading the page)</li>
+            <li>Made for Firefox</li>
           </ul>
           <div class="tags"><span>JavaScript</span><span>Browser Extension</span><span>DOM</span></div>
+          <div class="card-links">
+            <a href="#live">Try the live demo <svg><use href="#i-arrow"/></svg></a>
+          </div>
         </div>
       </article>
 
@@ -1460,12 +1207,12 @@
         <p class="eyebrow">No screenshots</p>
         <h2>Live examples.</h2>
       </div>
-      <p class="section-note">Four small experiments running right here. Move your pointer, drag on touch, hover the card and try the button — the code is doing the work.</p>
+      <p class="section-note">Four live builds from the archive: the MeteorCo cursor trail, two games from A Hole Lotta Fun and the Math Display Patch extension running for real.</p>
     </div>
 
     <div class="demo-grid">
       <article class="demo-card reveal">
-        <div class="demo-stage meteorco-stage">
+        <div class="demo-stage">
           <iframe src="demos/meteorco/index.html" title="MeteorCo and Cursor Trail live demo" loading="lazy"></iframe>
           <span class="demo-label">Move your pointer · scroll inside</span>
         </div>
@@ -1478,177 +1225,43 @@
       </article>
 
       <article class="demo-card reveal">
-        <div class="demo-stage constellation-stage" id="constellationStage">
-          <canvas id="constellationCanvas" role="img" aria-label="Interactive particle constellation demo">A field of dots connects nearby neighbours and reacts to your pointer.</canvas>
-          <span class="demo-label">Drag to disturb the field</span>
+        <div class="demo-stage">
+          <iframe src="demos/aholelottafun/memory.html" title="A Hole Lotta Fun Memory Match live demo" loading="lazy"></iframe>
+          <span class="demo-label demo-label--corner">Click / tap to play</span>
         </div>
         <div class="demo-copy">
-          <p class="demo-kicker">Canvas · Geometry</p>
-          <h3>Particle constellation</h3>
-          <p>Dots drift, connect to nearby neighbours and push away from the pointer. A tiny physics loop in under 60 lines.</p>
+          <p class="demo-kicker">JavaScript · Game · Arcade</p>
+          <h3>A Hole Lotta Fun · Memory Match</h3>
+          <p>The actual Memory Match game from the six-game arcade: flip cards, find eight pairs, and watch the move, timer and score HUD update.</p>
+          <a class="demo-link" href="demos/aholelottafun/memory.html" target="_blank" rel="noopener">Open full demo <svg><use href="#i-arrow"/></svg></a>
         </div>
       </article>
 
       <article class="demo-card reveal">
-        <div class="demo-stage tilt-stage" id="tiltStage">
-          <div class="tilt-card" id="tiltCard">
-            <span class="tilt-badge">WAM / 3D</span>
-            <h3>Interactive card</h3>
-            <p>Move over the surface to tilt it and catch the light.</p>
-          </div>
+        <div class="demo-stage">
+          <iframe src="demos/aholelottafun/twenty48.html" title="A Hole Lotta Fun 2048 live demo" loading="lazy"></iframe>
+          <span class="demo-label demo-label--corner">Arrow keys or swipe</span>
         </div>
         <div class="demo-copy">
-          <p class="demo-kicker">CSS 3D · Pointer</p>
-          <h3>Tilt card</h3>
-          <p>Pointer position becomes a CSS transform and a moving highlight, with no library involved.</p>
+          <p class="demo-kicker">JavaScript · Game · Arcade</p>
+          <h3>A Hole Lotta Fun · 2048</h3>
+          <p>The actual 2048 board from the arcade: slide tiles, merge matching numbers and track your score, best and move count.</p>
+          <a class="demo-link" href="demos/aholelottafun/twenty48.html" target="_blank" rel="noopener">Open full demo <svg><use href="#i-arrow"/></svg></a>
         </div>
       </article>
 
       <article class="demo-card reveal">
-        <div class="demo-stage magnetic-stage" id="magneticStage">
-          <button class="magnetic-btn" id="magneticBtn" type="button">Magnetic button</button>
-          <p class="demo-hint">Move closer</p>
+        <div class="demo-stage">
+          <iframe src="demos/math-display-patch/index.html" title="Math Display Patch live demo" loading="lazy"></iframe>
+          <span class="demo-label demo-label--corner">Press 2 + 2 =</span>
         </div>
         <div class="demo-copy">
-          <p class="demo-kicker">Pointer · Motion</p>
-          <h3>Magnetic button</h3>
-          <p>A button that leans toward the cursor with a distance-based easing curve.</p>
+          <p class="demo-kicker">JavaScript · Browser Extension</p>
+          <h3>Math Display Patch</h3>
+          <p>The actual extension content script running live: every 4 in the calculator output becomes “TOTALLY 5”. Try 2 + 2 =.</p>
+          <a class="demo-link" href="demos/math-display-patch/index.html" target="_blank" rel="noopener">Open full demo <svg><use href="#i-arrow"/></svg></a>
         </div>
       </article>
-    </div>
-  </section>
-
-  <section id="code" class="section code-section wrap">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">Under the hood</p>
-        <h2>Selected code.</h2>
-      </div>
-      <p class="section-note">Four snippets from four different stacks — an API pipeline, a background monitor, an Android service and a wearable UI.</p>
-    </div>
-
-    <div class="code-window reveal">
-      <div class="code-bar">
-        <span class="dots"><i></i><i></i><i></i></span>
-        <div class="code-tabs" role="tablist" aria-label="Code samples">
-          <button type="button" class="code-tab is-active" data-code="printify" role="tab" aria-selected="true">printify.js</button>
-          <button type="button" class="code-tab" data-code="soundary" role="tab" aria-selected="false">monitor.py</button>
-          <button type="button" class="code-tab" data-code="dialer" role="tab" aria-selected="false">MainActivity.kt</button>
-          <button type="button" class="code-tab" data-code="watch" role="tab" aria-selected="false">main.py</button>
-        </div>
-        <span class="code-lang" id="codeLang">JavaScript</span>
-      </div>
-
-      <pre class="code-panel is-active" data-panel="printify"><code><span class="cmt">// Fetch every product at build time with a native HTTPS stream</span>
-<span class="kw">const</span> <span class="fn">fetchProducts</span> = () =&gt; <span class="kw">new</span> Promise((resolve, reject) =&gt; {
-  <span class="kw">const</span> req = https.<span class="fn">request</span>({
-    hostname: <span class="str">'api.printify.com'</span>,
-    port: <span class="num">443</span>,
-    path: <span class="str">`/v1/shops/${shopId}/products.json`</span>,
-    headers: {
-      Authorization: <span class="str">`Bearer ${apiToken}`</span>,
-      <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>
-    },
-    timeout: <span class="num">15000</span>
-  }, (res) =&gt; {
-    <span class="kw">let</span> data = <span class="str">''</span>;
-    res.<span class="fn">on</span>(<span class="str">'data'</span>, (chunk) =&gt; { data += chunk; });
-    res.<span class="fn">on</span>(<span class="str">'end'</span>, () =&gt; resolve(JSON.<span class="fn">parse</span>(data)));
-  });
-
-  req.<span class="fn">on</span>(<span class="str">'error'</span>, reject);
-  req.<span class="fn">on</span>(<span class="str">'timeout'</span>, () =&gt; reject(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Printify timed out.'</span>)));
-  req.<span class="fn">end</span>();
-});</code></pre>
-
-      <pre class="code-panel" data-panel="soundary"><code><span class="cmt"># Replay guard: never re-trigger the same mail message for a while</span>
-<span class="kw">def</span> <span class="fn">mail_recently_played</span>(msg_id):
-    now = time.<span class="fn">time</span>()
-    last = _recent_mail_ids.<span class="fn">get</span>(msg_id, <span class="num">0</span>)
-    <span class="kw">if</span> (now - last) &lt; MAIL_REPLAY_GUARD:
-        <span class="kw">return</span> <span class="kw">True</span>
-    _recent_mail_ids[msg_id] = now
-    <span class="kw">if</span> <span class="fn">len</span>(_recent_mail_ids) &gt; <span class="num">100</span>:
-        _recent_mail_ids.<span class="fn">clear</span>()
-    <span class="kw">return</span> <span class="kw">False</span>
-
-<span class="cmt"># Accessibility API attributes watched by the background daemon</span>
-AX_ATTRS = [
-    <span class="str">"AXWindows"</span>, <span class="str">"AXChildren"</span>, <span class="str">"AXRole"</span>, <span class="str">"AXTitle"</span>,
-    <span class="str">"AXValue"</span>, <span class="str">"AXDescription"</span>, <span class="str">"AXGroup"</span>,
-]</code></pre>
-
-      <pre class="code-panel" data-panel="dialer"><code><span class="cmt">// Four-tab dialer shell built from fragments</span>
-bottomNav = <span class="fn">findViewById</span>(R.id.bottom_nav)
-bottomNav.<span class="fn">setOnItemSelectedListener</span> { item -&gt;
-    <span class="kw">val</span> fragment: Fragment? = <span class="kw">when</span> (item.itemId) {
-        R.id.tab_dialer -&gt; DialerFragment.<span class="fn">newInstance</span>()
-        R.id.tab_contacts -&gt; ContactsFragment.<span class="fn">newInstance</span>()
-        R.id.tab_recents -&gt; RecentsFragment.<span class="fn">newInstance</span>()
-        R.id.tab_settings -&gt; SettingsFragment.<span class="fn">newInstance</span>()
-        <span class="kw">else</span> -&gt; <span class="kw">null</span>
-    }
-    <span class="kw">if</span> (fragment != <span class="kw">null</span>) {
-        supportFragmentManager.<span class="fn">beginTransaction</span>()
-            .<span class="fn">replace</span>(R.id.fragment_container, fragment)
-            .<span class="fn">commitNow</span>()
-    }
-    <span class="kw">true</span>
-}</code></pre>
-
-      <pre class="code-panel" data-panel="watch"><code><span class="cmt"># Vector icons drawn directly on the round GC9A01 display</span>
-<span class="kw">def</span> <span class="fn">draw_house</span>(x, y, color):
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">15</span>):
-        tft.<span class="fn">line</span>(x + <span class="num">15</span> - i, y + i, x + <span class="num">15</span> + i, y + i, color)
-    tft.<span class="fn">rect</span>(x + <span class="num">4</span>, y + <span class="num">15</span>, <span class="num">22</span>, <span class="num">15</span>, color)
-    tft.<span class="fn">fill_rect</span>(x + <span class="num">11</span>, y + <span class="num">22</span>, <span class="num">8</span>, <span class="num">8</span>, color)
-
-<span class="kw">def</span> <span class="fn">draw_wifi</span>(x, y, color):
-    tft.<span class="fn">fill_circle</span>(x + <span class="num">15</span>, y + <span class="num">26</span>, <span class="num">3</span>, color)
-    tft.<span class="fn">circle</span>(x + <span class="num">15</span>, y + <span class="num">26</span>, <span class="num">10</span>, color,
-               clip=(<span class="kw">True</span>, <span class="kw">True</span>, <span class="kw">False</span>, <span class="kw">False</span>))
-    tft.<span class="fn">circle</span>(x + <span class="num">15</span>, y + <span class="num">26</span>, <span class="num">20</span>, color,
-               clip=(<span class="kw">True</span>, <span class="kw">True</span>, <span class="kw">False</span>, <span class="kw">False</span>))</code></pre>
-    </div>
-  </section>
-
-  <section id="examples" class="section code-section wrap">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">More examples</p>
-        <h2>Source files.</h2>
-      </div>
-      <p class="section-note">Four working files from A Hole Lotta Fun — a PHP save API, a shared game helper and the logic behind two of the games.</p>
-    </div>
-
-    <div class="example-grid">
-      <a class="example-card reveal" href="code/save-progress.php.txt" target="_blank" rel="noopener">
-        <span class="file-type">PHP</span>
-        <h3>save-progress.php</h3>
-        <p>Session-checked JSON API that upserts per-user progress and records leaderboard scores with prepared statements.</p>
-        <div class="file-meta"><span>API · MySQL</span><span>Open file <svg><use href="#i-arrow"/></svg></span></div>
-      </a>
-
-      <a class="example-card reveal" href="code/game-common.js" target="_blank" rel="noopener">
-        <span class="file-type">JavaScript</span>
-        <h3>game-common.js</h3>
-        <p>Shared client helpers for login-aware saves, progress loading, leaderboard fetches and toast notifications.</p>
-        <div class="file-meta"><span>Fetch · Game UI</span><span>Open file <svg><use href="#i-arrow"/></svg></span></div>
-      </a>
-
-      <a class="example-card reveal" href="code/twenty48.js" target="_blank" rel="noopener">
-        <span class="file-type">JavaScript</span>
-        <h3>twenty48.js</h3>
-        <p>The merge and slide core from the 2048 game, including score tracking and move validation.</p>
-        <div class="file-meta"><span>Game logic</span><span>Open file <svg><use href="#i-arrow"/></svg></span></div>
-      </a>
-
-      <a class="example-card reveal" href="code/memory.js" target="_blank" rel="noopener">
-        <span class="file-type">JavaScript</span>
-        <h3>memory.js</h3>
-        <p>Card matching, pair scoring and the flip-lock state machine from the Memory Match game.</p>
-        <div class="file-meta"><span>DOM · State</span><span>Open file <svg><use href="#i-arrow"/></svg></span></div>
-      </a>
     </div>
   </section>
 </main>
@@ -1657,12 +1270,11 @@ bottomNav.<span class="fn">setOnItemSelectedListener</span> { item -&gt;
   <div class="wrap site-footer-inner">
     <a class="brand" href="#top">
       <span class="brand-mark">W</span>
-      <span class="brand-text">WAM <em>Studios</em></span>
+      <img class="brand-logo" src="image/WAM Logo TW.svg" alt="WAM Studios">
     </a>
     <nav class="footer-nav" aria-label="Footer navigation">
       <a href="#work">Work</a>
       <a href="#live">Demos</a>
-      <a href="#code">Code</a>
       <a href="https://github.com/Salad-Spinner" target="_blank" rel="noopener">GitHub</a>
     </nav>
     <p class="footer-copy">&copy; 2026 WAM Studios. Built by hand with HTML, CSS and JavaScript.</p>
@@ -1685,174 +1297,6 @@ bottomNav.<span class="fn">setOnItemSelectedListener</span> { item -&gt;
       });
     });
   });
-
-  const codeTabs = document.querySelectorAll('.code-tab');
-  const codePanels = document.querySelectorAll('.code-panel');
-  const codeLang = document.getElementById('codeLang');
-  const languages = {
-    printify: 'JavaScript',
-    soundary: 'Python',
-    dialer: 'Kotlin',
-    watch: 'MicroPython'
-  };
-
-  codeTabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      codeTabs.forEach((t) => {
-        t.classList.remove('is-active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      tab.classList.add('is-active');
-      tab.setAttribute('aria-selected', 'true');
-
-      codePanels.forEach((panel) => {
-        panel.classList.toggle('is-active', panel.dataset.panel === tab.dataset.code);
-      });
-      codeLang.textContent = languages[tab.dataset.code] || '';
-    });
-  });
-
-  (() => {
-    const stage = document.getElementById('constellationStage');
-    const canvas = document.getElementById('constellationCanvas');
-    if (!stage || !canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const pointer = { x: -999, y: -999 };
-    let width = 0;
-    let height = 0;
-    let dots = [];
-
-    function buildDots() {
-      const count = Math.max(38, Math.min(80, Math.round((width * height) / 8000)));
-      dots = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.5 + 1
-      }));
-    }
-
-    function resize() {
-      const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = rect.width;
-      height = rect.height;
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildDots();
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, width, height);
-
-      dots.forEach((dot) => {
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-
-        if (dot.x < 0 || dot.x > width) dot.vx *= -1;
-        if (dot.y < 0 || dot.y > height) dot.vy *= -1;
-
-        const dx = dot.x - pointer.x;
-        const dy = dot.y - pointer.y;
-        const distance = Math.hypot(dx, dy);
-
-        if (distance < 110 && distance > 0.001) {
-          const force = (110 - distance) / 110;
-          dot.x += (dx / distance) * force * 1.4;
-          dot.y += (dy / distance) * force * 1.4;
-        }
-      });
-
-      for (let i = 0; i < dots.length; i += 1) {
-        for (let j = i + 1; j < dots.length; j += 1) {
-          const a = dots[i];
-          const b = dots[j];
-          const distance = Math.hypot(a.x - b.x, a.y - b.y);
-
-          if (distance < 92) {
-            ctx.strokeStyle = `rgba(34, 211, 238, ${(1 - distance / 92) * 0.32})`;
-            ctx.lineWidth = 0.7;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      dots.forEach((dot) => {
-        ctx.fillStyle = 'rgba(0, 255, 159, 0.9)';
-        ctx.shadowColor = 'rgba(0, 255, 159, 0.7)';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      ctx.shadowBlur = 0;
-      requestAnimationFrame(draw);
-    }
-
-    stage.addEventListener('pointermove', (event) => {
-      const rect = stage.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
-    });
-
-    stage.addEventListener('pointerleave', () => {
-      pointer.x = -999;
-      pointer.y = -999;
-    });
-
-    new ResizeObserver(resize).observe(stage);
-    resize();
-    requestAnimationFrame(draw);
-  })();
-
-  (() => {
-    const stage = document.getElementById('tiltStage');
-    const card = document.getElementById('tiltCard');
-    if (!stage || !card) return;
-
-    stage.addEventListener('pointermove', (event) => {
-      const rect = stage.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `rotateX(${(-y * 14).toFixed(2)}deg) rotateY(${(x * 18).toFixed(2)}deg)`;
-      card.style.setProperty('--mx', `${((x + 0.5) * 100).toFixed(1)}%`);
-      card.style.setProperty('--my', `${((y + 0.5) * 100).toFixed(1)}%`);
-    });
-
-    stage.addEventListener('pointerleave', () => {
-      card.style.transform = '';
-      card.style.setProperty('--mx', '50%');
-      card.style.setProperty('--my', '50%');
-    });
-  })();
-
-  (() => {
-    const stage = document.getElementById('magneticStage');
-    const button = document.getElementById('magneticBtn');
-    if (!stage || !button) return;
-
-    stage.addEventListener('pointermove', (event) => {
-      const rect = stage.getBoundingClientRect();
-      const x = event.clientX - (rect.left + rect.width / 2);
-      const y = event.clientY - (rect.top + rect.height / 2);
-      const distance = Math.hypot(x, y);
-      const strength = Math.max(0, 1 - distance / 180);
-      button.style.transform = `translate(${(x * 0.22 * strength).toFixed(1)}px, ${(y * 0.22 * strength).toFixed(1)}px)`;
-    });
-
-    stage.addEventListener('pointerleave', () => {
-      button.style.transform = '';
-    });
-  })();
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

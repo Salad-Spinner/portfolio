@@ -1,0 +1,79 @@
+h1,h2,h3,h4,h5,h6,label,a {
+    font-family: Happy Chicken, Arial, sans-serif !important;
+}
+
+/* Brand color styles */
+.brand-greenText {
+    color: #72dfb1 !important;
+}
+
+.brand-pinkText {
+    color: #ff69b4 !important;
+}
+
+.brand-orangeText {
+    color: #ffaa00 !important;
+}
+
+.brand-blueText {
+    color: #00e1ff !important;
+}
+
+/* Navbar styles */
+nav {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    vertical-align: middle;
+}
+
+#title {
+    margin: 0;
+    padding-left: 10px;
+}
+
+.auth-links {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.auth-links a {
+    margin-left: 10px;
+}
+
+@font-face {
+    font-family: "Happy Chicken";
+    src: url("img/fonts/Happy%20Chicken.ttf") format("truetype");
+}
+
+body {
+    font-family: Happy Chicken, Arial, sans-serif !important;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.homeContainter {
+    text-align: center;
+    position: relative;
+    display: inline;
+    top: -130px;
+    text-decoration: none;
+}
+
+.homeContainterTop {
+    text-align: center;
+    position: relative;
+    display: inline;
+    text-decoration: none;    
+}
+
+.loginbutton {
+    text-align: center; color: #004f6e; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-decoration: none;
+}

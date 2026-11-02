@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2048 — A Hole Lotta Fun</title>
+<link rel="stylesheet" href="main.css">
+<link rel="stylesheet" href="game.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body.game-page { min-height: 100%; overflow: hidden; }
+  .demo-game { height: 100svh; display: grid; place-items: center; padding: 0.5rem; }
+  .demo-panel { width: 100%; max-width: 560px; padding: 0.6rem; border-radius: 18px; }
+  .demo-layout { display: flex; align-items: center; gap: 0.8rem; }
+  .demo-board-wrap { flex: 0 0 auto; margin: 0; padding: 0.4rem; border-radius: 14px; }
+  .board-2048 { width: clamp(150px, 34vw, 200px); gap: 0.3rem; padding: 0.3rem; border-radius: 12px; }
+  .cell-2048, .tile-2048 { border-radius: 7px; }
+  .tile-2048 { font-size: clamp(0.55rem, 2.2vw, 0.9rem); }
+  .demo-side { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 0.55rem; }
+  .demo-side .game-kicker { margin: 0; font-size: 0.55rem; }
+  .demo-side h1 { margin: 0; font-size: clamp(0.9rem, 2.4vw, 1.25rem); color: var(--g-deep); }
+  .demo-side .game-hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.3rem; width: 100%; }
+  .demo-side .game-stat { min-width: 0; padding: 0.3rem 0.4rem; border-radius: 9px; }
+  .demo-side .game-stat small { font-size: 0.48rem; letter-spacing: 0.08em; }
+  .demo-side .game-stat strong { font-size: 0.72rem; }
+  .demo-side .btn { align-self: flex-start; padding: 0.35rem 0.7rem; font-size: 0.68rem; }
+  .demo-hint { margin: 0; color: var(--g-muted); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.04em; }
+  .game-overlay { padding: 0.5rem; }
+  .overlay-card { padding: 0.9rem; border-radius: 16px; }
+  .overlay-card h2 { margin-bottom: 0.25rem; font-size: 1.1rem; }
+  .overlay-card p { margin-bottom: 0.6rem; font-size: 0.72rem; }
+  .overlay-kicker { font-size: 0.55rem !important; }
+  .overlay-actions .btn { padding: 0.35rem 0.7rem; font-size: 0.68rem; }
+  .toast { bottom: 0.6rem; padding: 0.4rem 0.8rem; font-size: 0.65rem; }
+  @media (max-width: 420px) {
+    .demo-layout { gap: 0.5rem; }
+    .demo-panel { padding: 0.45rem; }
+    .demo-board-wrap { padding: 0.3rem; }
+    .board-2048 { gap: 0.22rem; padding: 0.22rem; }
+    .demo-side h1 { font-size: 0.85rem; }
+    .demo-side .game-stat { padding: 0.22rem 0.3rem; }
+    .demo-side .game-stat strong { font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body class="game-page accent-sky" data-game-key="" data-logged-in="0" data-redirect="" data-just-logged-in="0">
+<main class="demo-game">
+  <section class="game-panel demo-panel">
+    <div class="demo-layout">
+      <div class="game-board-wrap demo-board-wrap">
+        <div class="board-2048" id="board" role="group" aria-label="2048 game board" tabindex="0"></div>
+      </div>
+      <div class="demo-side">
+        <p class="game-kicker">2048</p>
+        <h1>Slide, merge, repeat.</h1>
+        <div class="game-hud">
+          <div class="game-stat"><small>Score</small><strong id="score">0</strong></div>
+          <div class="game-stat"><small>Best</small><strong id="best">0</strong></div>
+          <div class="game-stat"><small>Moves</small><strong id="moves">0</strong></div>
+        </div>
+        <button class="btn" id="newBtn" type="button">New game</button>
+        <p class="demo-hint">Arrow keys or swipe</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="game-overlay" id="overlay" hidden>
+  <div class="overlay-card">
+    <p class="overlay-kicker">No moves left</p>
+    <h2 id="overlayTitle">The board is full.</h2>
+    <p id="overlayText"></p>
+    <div class="overlay-actions">
+      <button class="btn" id="overlayBtn" type="button">Play again</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="game-common.js"></script>
+<script>
+const boardEl = document.getElementById('board');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const movesEl = document.getElementById('moves');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+
+    let grid = [];
+    let score = 0;
+    let best = readBest();
+    let moves = 0;
+    let won = false;
+    let gameOver = false;
+    let swipeStart = null;
+
+    function readBest() {
+        try {
+            return Number(localStorage.getItem('ahlf_2048_best')) || 0;
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    function writeBest(value) {
+        try {
+            localStorage.setItem('ahlf_2048_best', String(value));
+        } catch (error) {
+            /* Local storage is optional. */
+        }
+    }
+
+    function emptyGrid() {
+        return [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ];
+    }
+
+    function addRandomTile() {
+        const empty = [];
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                if (grid[row][col] === 0) empty.push({ row: row, col: col });
+            }
+        }
+        if (!empty.length) return;
+        const spot = empty[Math.floor(Math.random() * empty.length)];
+        grid[spot.row][spot.col] = Math.random() < 0.9 ? 2 : 4;
+    }
+
+    function updateHud() {
+        if (score > best) {
+            best = score;
+            writeBest(best);
+        }
+        scoreEl.textContent = score;
+        bestEl.textContent = best;
+        movesEl.textContent = moves;
+    }
+
+    function tileClass(value) {
+        return value > 2048 ? 'tile-2048 v-super' : 'tile-2048 v' + value;
+    }
+
+    function render() {
+        boardEl.innerHTML = '';
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell-2048';
+                const value = grid[row][col];
+                if (value) {
+                    const tile = document.createElement('div');
+                    tile.className = tileClass(value);
+                    tile.textContent = value;
+                    cell.appendChild(tile);
+                }
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    function slide(row) {
+        const values = row.filter(function (value) { return value !== 0; });
+        const result = [];
+
+        for (let i = 0; i < values.length; i++) {
+            if (i + 1 < values.length && values[i] === values[i + 1]) {
+                const merged = values[i] * 2;
+                result.push(merged);
+                score += merged;
+                i++;
+            } else {
+                result.push(values[i]);
+            }
+        }
+
+        while (result.length < 4) result.push(0);
+        return result;
+    }
+
+    function move(direction) {
+        if (gameOver) return;
+
+        let moved = false;
+        const scoreBefore = score;
+
+        if (direction === 'left' || direction === 'right') {
+            for (let row = 0; row < 4; row++) {
+                const original = grid[row].slice();
+                let line = grid[row].slice();
+                if (direction === 'right') line.reverse();
+                let merged = slide(line);
+                if (direction === 'right') merged.reverse();
+                if (merged.join(',') !== original.join(',')) moved = true;
+                grid[row] = merged;
+            }
+        } else {
+            for (let col = 0; col < 4; col++) {
+                const original = [grid[0][col], grid[1][col], grid[2][col], grid[3][col]];
+                let line = original.slice();
+                if (direction === 'down') line.reverse();
+                let merged = slide(line);
+                if (direction === 'down') merged.reverse();
+                if (merged.join(',') !== original.join(',')) moved = true;
+                for (let row = 0; row < 4; row++) grid[row][col] = merged[row];
+            }
+        }
+
+        if (!moved) {
+            score = scoreBefore;
+            return;
+        }
+
+        moves++;
+        addRandomTile();
+        updateHud();
+        render();
+
+        if (!won && grid.some(function (row) { return row.indexOf(2048) !== -1; })) {
+            won = true;
+            AHLF.showToast('2048! Keep going for a higher score');
+        }
+
+        if (isGameOver()) endGame();
+    }
+
+    function isGameOver() {
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                if (grid[row][col] === 0) return false;
+                if (col < 3 && grid[row][col] === grid[row][col + 1]) return false;
+                if (row < 3 && grid[row][col] === grid[row + 1][col]) return false;
+            }
+        }
+        return true;
+    }
+
+    function endGame() {
+        gameOver = true;
+        overlayTitle.textContent = score > 0 ? 'The board is full.' : 'No moves left.';
+        overlayText.textContent = 'You scored ' + score + ' points in ' + moves + ' moves.';
+        overlay.hidden = false;
+        if (AHLF.loggedIn) AHLF.saveProgress(getState());
+    }
+
+    function newGame() {
+        grid = emptyGrid();
+        score = 0;
+        moves = 0;
+        won = false;
+        gameOver = false;
+        overlay.hidden = true;
+        addRandomTile();
+        addRandomTile();
+        updateHud();
+        render();
+    }
+
+    function getState() {
+        return {
+            grid: grid.map(function (row) { return row.slice(); }),
+            score: score,
+            moves: moves,
+            won: won
+        };
+    }
+
+    function applyState(progress) {
+        if (!progress || !Array.isArray(progress.grid) || progress.grid.length !== 4) {
+            AHLF.showToast('That save could not be read');
+            return;
+        }
+
+        const next = progress.grid.map(function (row) {
+            if (!Array.isArray(row) || row.length !== 4) return null;
+            return row.map(function (value) { return Number(value) || 0; });
+        });
+
+        if (next.some(function (row) { return row === null; })) {
+            AHLF.showToast('That save could not be read');
+            return;
+        }
+
+        grid = next;
+        score = Number(progress.score) || 0;
+        moves = Number(progress.moves) || 0;
+        won = Boolean(progress.won);
+        gameOver = false;
+        overlay.hidden = true;
+        updateHud();
+        render();
+        if (isGameOver()) endGame();
+    }
+
+    document.addEventListener('keydown', function (event) {
+        const key = event.key;
+        if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
+            move('left');
+            event.preventDefault();
+        } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
+            move('right');
+            event.preventDefault();
+        } else if (key === 'ArrowUp' || key === 'w' || key === 'W') {
+            move('up');
+            event.preventDefault();
+        } else if (key === 'ArrowDown' || key === 's' || key === 'S') {
+            move('down');
+            event.preventDefault();
+        }
+    });
+
+    boardEl.addEventListener('pointerdown', function (event) {
+        swipeStart = { x: event.clientX, y: event.clientY };
+    });
+
+    boardEl.addEventListener('pointerup', function (event) {
+        if (!swipeStart) return;
+        const dx = event.clientX - swipeStart.x;
+        const dy = event.clientY - swipeStart.y;
+        swipeStart = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            move(dx > 0 ? 'right' : 'left');
+        } else {
+            move(dy > 0 ? 'down' : 'up');
+        }
+    });
+
+    boardEl.addEventListener('pointercancel', function () {
+        swipeStart = null;
+    });
+
+    document.getElementById('newBtn').addEventListener('click', newGame);
+    document.getElementById('overlayBtn').addEventListener('click', newGame);
+
+    AHLF.bindSaveLoad(getState, applyState);
+    AHLF.fetchWorldHigh();
+    AHLF.onJustLoggedIn(async function () {
+        const progress = await AHLF.loadProgress();
+        if (progress) applyState(progress);
+    });
+
+    newGame();
+</script>
+</body>
+</html>

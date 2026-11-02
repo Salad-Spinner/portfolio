@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Match — A Hole Lotta Fun</title>
+<link rel="stylesheet" href="main.css">
+<link rel="stylesheet" href="game.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body.game-page { min-height: 100%; overflow: hidden; }
+  .demo-game { height: 100svh; display: grid; place-items: center; padding: 0.5rem; }
+  .demo-panel { width: 100%; max-width: 560px; padding: 0.6rem; border-radius: 18px; }
+  .demo-layout { display: flex; align-items: center; gap: 0.8rem; }
+  .demo-board-wrap { flex: 0 0 auto; margin: 0; padding: 0.4rem; border-radius: 14px; }
+  .memory-grid { width: clamp(150px, 34vw, 200px); gap: 0.3rem; }
+  .memory-card, .memory-inner, .memory-face { border-radius: 10px; }
+  .memory-face { font-size: clamp(1rem, 4vw, 1.6rem); }
+  .demo-side { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 0.55rem; }
+  .demo-side .game-kicker { margin: 0; font-size: 0.55rem; }
+  .demo-side h1 { margin: 0; font-size: clamp(0.9rem, 2.4vw, 1.25rem); color: var(--g-deep); }
+  .demo-side .game-hud { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.3rem; width: 100%; }
+  .demo-side .game-stat { min-width: 0; padding: 0.3rem 0.4rem; border-radius: 9px; }
+  .demo-side .game-stat small { font-size: 0.48rem; letter-spacing: 0.08em; }
+  .demo-side .game-stat strong { font-size: 0.72rem; }
+  .demo-side .btn { align-self: flex-start; padding: 0.35rem 0.7rem; font-size: 0.68rem; }
+  .game-overlay { padding: 0.5rem; }
+  .overlay-card { padding: 0.9rem; border-radius: 16px; }
+  .overlay-card h2 { margin-bottom: 0.25rem; font-size: 1.1rem; }
+  .overlay-card p { margin-bottom: 0.6rem; font-size: 0.72rem; }
+  .overlay-kicker { font-size: 0.55rem !important; }
+  .overlay-actions .btn { padding: 0.35rem 0.7rem; font-size: 0.68rem; }
+  .toast { bottom: 0.6rem; padding: 0.4rem 0.8rem; font-size: 0.65rem; }
+  @media (max-width: 420px) {
+    .demo-layout { gap: 0.5rem; }
+    .demo-panel { padding: 0.45rem; }
+    .demo-board-wrap { padding: 0.3rem; }
+    .memory-grid { gap: 0.22rem; }
+    .demo-side h1 { font-size: 0.85rem; }
+    .demo-side .game-stat { padding: 0.22rem 0.3rem; }
+    .demo-side .game-stat strong { font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body class="game-page accent-green" data-game-key="" data-logged-in="0" data-redirect="" data-just-logged-in="0">
+<main class="demo-game">
+  <section class="game-panel demo-panel">
+    <div class="demo-layout">
+      <div class="game-board-wrap demo-board-wrap">
+        <div class="memory-grid" id="board" role="group" aria-label="Memory match board"></div>
+      </div>
+      <div class="demo-side">
+        <p class="game-kicker">Memory Match</p>
+        <h1>Find every pair.</h1>
+        <div class="game-hud">
+          <div class="game-stat"><small>Moves</small><strong id="moves">0</strong></div>
+          <div class="game-stat"><small>Pairs</small><strong id="pairs">0/8</strong></div>
+          <div class="game-stat"><small>Time</small><strong id="time">0:00</strong></div>
+          <div class="game-stat"><small>Score</small><strong id="score">0</strong></div>
+        </div>
+        <button class="btn" id="newBtn" type="button">New game</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="game-overlay" id="overlay" hidden>
+  <div class="overlay-card">
+    <p class="overlay-kicker">Board cleared</p>
+    <h2 id="overlayTitle">You found every pair!</h2>
+    <p id="overlayText"></p>
+    <div class="overlay-actions">
+      <button class="btn" id="overlayBtn" type="button">Play again</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="game-common.js"></script>
+<script>
+const SYMBOLS = [
+        { symbol: '★', color: '#e59400' },
+        { symbol: '●', color: '#0089d6' },
+        { symbol: '▲', color: '#24b184' },
+        { symbol: '◆', color: '#f254a4' },
+        { symbol: '♥', color: '#e8457a' },
+        { symbol: '♣', color: '#004f6e' },
+        { symbol: '☀', color: '#f0a500' },
+        { symbol: '☂', color: '#6a4bff' }
+    ];
+
+    const boardEl = document.getElementById('board');
+    const movesEl = document.getElementById('moves');
+    const pairsEl = document.getElementById('pairs');
+    const timeEl = document.getElementById('time');
+    const scoreEl = document.getElementById('score');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+
+    let deck = [];
+    let flipped = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    let seconds = 0;
+    let score = 0;
+    let lock = false;
+    let finished = false;
+    let timerId = null;
+
+    function shuffle(items) {
+        for (let i = items.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [items[i], items[j]] = [items[j], items[i]];
+        }
+        return items;
+    }
+
+    function buildDeck() {
+        return shuffle(SYMBOLS.concat(SYMBOLS).map(function (item, index) {
+            return { symbol: item.symbol, color: item.color, matched: false, id: index };
+        }));
+    }
+
+    function formatTime(total) {
+        const minutes = Math.floor(total / 60);
+        const remaining = total % 60;
+        return minutes + ':' + String(remaining).padStart(2, '0');
+    }
+
+    function updateHud() {
+        movesEl.textContent = moves;
+        pairsEl.textContent = matchedPairs + '/' + SYMBOLS.length;
+        timeEl.textContent = formatTime(seconds);
+        scoreEl.textContent = score;
+    }
+
+    function startTimer() {
+        clearInterval(timerId);
+        if (finished) return;
+        timerId = setInterval(function () {
+            seconds++;
+            updateHud();
+        }, 1000);
+    }
+
+    function render() {
+        boardEl.innerHTML = '';
+        deck.forEach(function (card, index) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'memory-card';
+            button.dataset.index = index;
+
+            const faceUp = flipped.indexOf(index) !== -1 || card.matched;
+            if (faceUp) button.classList.add('is-flipped');
+            if (card.matched) button.classList.add('is-matched');
+            button.setAttribute('aria-label', faceUp ? 'Card showing ' + card.symbol : 'Hidden card');
+
+            const inner = document.createElement('span');
+            inner.className = 'memory-inner';
+
+            const front = document.createElement('span');
+            front.className = 'memory-face memory-front';
+
+            const back = document.createElement('span');
+            back.className = 'memory-face memory-back';
+            back.style.color = card.color;
+            back.textContent = card.symbol;
+
+            inner.appendChild(front);
+            inner.appendChild(back);
+            button.appendChild(inner);
+            button.addEventListener('click', function () { flip(index); });
+            boardEl.appendChild(button);
+        });
+    }
+
+    function flip(index) {
+        if (lock || finished || flipped.indexOf(index) !== -1 || deck[index].matched) return;
+
+        flipped.push(index);
+
+        if (flipped.length === 2) {
+            moves++;
+            const first = flipped[0];
+            const second = flipped[1];
+
+            if (deck[first].symbol === deck[second].symbol) {
+                deck[first].matched = true;
+                deck[second].matched = true;
+                matchedPairs++;
+                flipped = [];
+                score = matchedPairs * 100;
+                updateHud();
+                render();
+                if (matchedPairs === SYMBOLS.length) finish();
+            } else {
+                lock = true;
+                updateHud();
+                render();
+                setTimeout(function () {
+                    flipped = [];
+                    lock = false;
+                    render();
+                }, 760);
+            }
+        } else {
+            render();
+        }
+    }
+
+    function finish() {
+        finished = true;
+        clearInterval(timerId);
+        score = matchedPairs * 100 + Math.max(0, 300 - moves * 10) + Math.max(0, 240 - seconds * 2);
+        updateHud();
+        render();
+        showOverlay('You found every pair!', 'Cleared in ' + moves + ' moves and ' + formatTime(seconds) + '. Final score: ' + score + '.');
+        if (AHLF.loggedIn) AHLF.saveProgress(getState());
+    }
+
+    function getState() {
+        return {
+            deck: deck.map(function (card) {
+                return { symbol: card.symbol, color: card.color, matched: card.matched };
+            }),
+            moves: moves,
+            seconds: seconds,
+            matchedPairs: matchedPairs,
+            score: score,
+            finished: finished
+        };
+    }
+
+    function applyState(progress) {
+        if (!progress || !Array.isArray(progress.deck) || progress.deck.length !== SYMBOLS.length * 2) {
+            AHLF.showToast('That save could not be read');
+            return;
+        }
+
+        clearInterval(timerId);
+        deck = progress.deck.map(function (card, index) {
+            return {
+                symbol: String(card.symbol || '?'),
+                color: String(card.color || '#004f6e'),
+                matched: Boolean(card.matched),
+                id: index
+            };
+        });
+        flipped = [];
+        lock = false;
+        matchedPairs = Number(progress.matchedPairs) || 0;
+        moves = Number(progress.moves) || 0;
+        seconds = Number(progress.seconds) || 0;
+        score = Number(progress.score) || 0;
+        finished = Boolean(progress.finished);
+
+        updateHud();
+        render();
+        hideOverlay();
+        if (finished) {
+            showOverlay('Board cleared', 'Final score: ' + score + '.');
+        } else {
+            startTimer();
+        }
+    }
+
+    function showOverlay(title, text) {
+        overlayTitle.textContent = title;
+        overlayText.textContent = text;
+        overlay.hidden = false;
+    }
+
+    function hideOverlay() {
+        overlay.hidden = true;
+    }
+
+    function startGame() {
+        clearInterval(timerId);
+        deck = buildDeck();
+        flipped = [];
+        matchedPairs = 0;
+        moves = 0;
+        seconds = 0;
+        score = 0;
+        lock = false;
+        finished = false;
+        hideOverlay();
+        updateHud();
+        render();
+        startTimer();
+    }
+
+    document.getElementById('newBtn').addEventListener('click', startGame);
+    document.getElementById('overlayBtn').addEventListener('click', startGame);
+
+    AHLF.bindSaveLoad(getState, applyState);
+    AHLF.fetchWorldHigh();
+    AHLF.onJustLoggedIn(async function () {
+        const progress = await AHLF.loadProgress();
+        if (progress) applyState(progress);
+    });
+
+    startGame();
+</script>
+</body>
+</html>

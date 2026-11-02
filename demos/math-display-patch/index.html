@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Math Display Patch — live demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(77, 163, 255, 0.12), transparent 45%),
+      #080b12;
+    color: #f3f6fb;
+    font-family: system-ui, sans-serif;
+  }
+
+  .calc-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    height: 100%;
+    padding: 0.4rem;
+  }
+
+  .calc {
+    width: min(100%, 320px);
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #111722, #0b0f16);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .calc-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    color: rgba(255, 255, 255, 0.42);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .calc-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1rem;
+    min-height: 3.2rem;
+    padding: 0.4rem 0.6rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: #05070b;
+    text-align: right;
+  }
+
+  #expression {
+    min-height: 1em;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.42);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.6rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #result {
+    min-height: 1.2em;
+    overflow: hidden;
+    color: #8fdcff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .calc-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+
+  .key {
+    padding: 0.4rem 0.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #f3f6fb;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+
+  .key:hover { background: rgba(255, 255, 255, 0.12); }
+  .key:active { transform: translateY(1px); }
+  .key--op { color: #8fdcff; background: rgba(77, 163, 255, 0.12); }
+  .key--action { color: #ffb86b; background: rgba(255, 184, 107, 0.1); }
+  .key--wide { grid-column: span 2; }
+  .key[data-value="4"] { font-size: 0.55rem; letter-spacing: -0.02em; }
+
+  .calc-hint {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.48);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media (max-height: 270px) {
+    .calc { padding: 0.35rem; }
+    .calc-screen { min-height: 2.7rem; padding: 0.3rem 0.5rem; }
+    .calc-keys { gap: 0.22rem; margin-top: 0.3rem; }
+    .key { padding: 0.3rem 0.15rem; font-size: 0.65rem; }
+    .calc-hint { font-size: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+<main class="calc-demo">
+  <div class="calc">
+    <div class="calc-top">
+      <span>Math Display Patch</span>
+      <span>content.js</span>
+    </div>
+    <div class="calc-screen" aria-live="polite">
+      <span id="expression">0</span>
+      <span id="result">0</span>
+    </div>
+    <div class="calc-keys">
+      <button class="key key--action" type="button" data-value="C">C</button>
+      <button class="key key--op" type="button" data-value="÷">÷</button>
+      <button class="key key--op" type="button" data-value="×">×</button>
+      <button class="key key--action" type="button" data-value="⌫" aria-label="Backspace">⌫</button>
+      <button class="key" type="button" data-value="7">7</button>
+      <button class="key" type="button" data-value="8">8</button>
+      <button class="key" type="button" data-value="9">9</button>
+      <button class="key key--op" type="button" data-value="−">−</button>
+      <button class="key" type="button" data-value="4">4</button>
+      <button class="key" type="button" data-value="5">5</button>
+      <button class="key" type="button" data-value="6">6</button>
+      <button class="key key--op" type="button" data-value="+">+</button>
+      <button class="key" type="button" data-value="1">1</button>
+      <button class="key" type="button" data-value="2">2</button>
+      <button class="key" type="button" data-value="3">3</button>
+      <button class="key" type="button" data-value=".">.</button>
+      <button class="key key--wide" type="button" data-value="0">0</button>
+      <button class="key key--wide key--op" type="button" data-value="=">=</button>
+    </div>
+  </div>
+  <p class="calc-hint">Press 2 + 2 =</p>
+</main>
+
+<script>
+  const expressionEl = document.getElementById('expression');
+  const resultEl = document.getElementById('result');
+  let expression = '';
+  let result = '0';
+  let justEvaluated = false;
+
+  function updateDisplay() {
+    expressionEl.textContent = expression || '0';
+    resultEl.textContent = result;
+  }
+
+  function compute(value) {
+    const safe = value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+    if (!/^[\d+\-*/.() ]+$/.test(safe)) return null;
+    try {
+      const answer = Function('"use strict"; return (' + safe + ')')();
+      if (!Number.isFinite(answer)) return 'Error';
+      return String(Math.round(answer * 1e10) / 1e10);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function press(value) {
+    if (value === 'C') {
+      expression = '';
+      result = '0';
+      justEvaluated = false;
+      updateDisplay();
+      return;
+    }
+
+    if (value === '⌫') {
+      expression = expression.slice(0, -1);
+      updateDisplay();
+      return;
+    }
+
+    if (value === '=') {
+      const answer = compute(expression);
+      if (answer !== null) {
+        result = answer;
+        justEvaluated = true;
+      }
+      updateDisplay();
+      return;
+    }
+
+    if (justEvaluated && /^[\d.]$/.test(value)) expression = '';
+    if (justEvaluated && /[+\-×÷−]/.test(value)) expression = result;
+    justEvaluated = false;
+    expression += value;
+    updateDisplay();
+  }
+
+  document.querySelectorAll('.key').forEach(function (button) {
+    button.addEventListener('click', function () {
+      press(button.dataset.value);
+    });
+  });
+
+  updateDisplay();
+</script>
+<script src="content.js"></script>
+</body>
+</html>
