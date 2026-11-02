@@ -707,8 +707,17 @@
     height: 100%;
   }
 
-  .trail-stage,
   .constellation-stage { cursor: crosshair; }
+
+  .meteorco-stage iframe {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #05070d;
+  }
 
   .demo-label {
     position: absolute;
@@ -751,6 +760,19 @@
     font-size: 0.82rem;
     line-height: 1.65;
   }
+
+  .demo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    color: var(--green);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .demo-link:hover { text-decoration: underline; }
+  .demo-link svg { width: 12px; height: 12px; }
 
   .tilt-stage { perspective: 900px; }
 
@@ -1443,14 +1465,15 @@
 
     <div class="demo-grid">
       <article class="demo-card reveal">
-        <div class="demo-stage trail-stage" id="trailStage">
-          <canvas id="trailCanvas" role="img" aria-label="Interactive cursor trail demo">A glowing particle trail follows your pointer.</canvas>
-          <span class="demo-label">Move or drag to draw</span>
+        <div class="demo-stage meteorco-stage">
+          <iframe src="demos/meteorco/index.html" title="MeteorCo and Cursor Trail live demo" loading="lazy"></iframe>
+          <span class="demo-label">Move your pointer · scroll inside</span>
         </div>
         <div class="demo-copy">
-          <p class="demo-kicker">Canvas · JavaScript</p>
-          <h3>Cursor trail</h3>
-          <p>A lightweight particle system that spawns glowing meteors under the pointer and fades them out on a canvas.</p>
+          <p class="demo-kicker">Canvas · Scroll · JavaScript</p>
+          <h3>MeteorCo &amp; Cursor Trail</h3>
+          <p>The original MeteorCo page: a glowing cursor trail over a starfield, plus the scroll-driven story engine. Move your pointer and scroll inside the panel.</p>
+          <a class="demo-link" href="demos/meteorco/index.html" target="_blank" rel="noopener">Open full demo <svg><use href="#i-arrow"/></svg></a>
         </div>
       </article>
 
@@ -1688,86 +1711,6 @@ bottomNav.<span class="fn">setOnItemSelectedListener</span> { item -&gt;
       codeLang.textContent = languages[tab.dataset.code] || '';
     });
   });
-
-  (() => {
-    const stage = document.getElementById('trailStage');
-    const canvas = document.getElementById('trailCanvas');
-    if (!stage || !canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let width = 0;
-    let height = 0;
-    let particles = [];
-
-    function resize() {
-      const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = rect.width;
-      height = rect.height;
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      particles = [];
-    }
-
-    function spawn(x, y) {
-      for (let i = 0; i < 3; i += 1) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 1.6 + 0.2;
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 1,
-          decay: 0.012 + Math.random() * 0.018,
-          size: Math.random() * 4 + 1.4,
-          hue: 155 + Math.random() * 95
-        });
-      }
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalCompositeOperation = 'lighter';
-
-      particles.forEach((particle) => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        particle.vx *= 0.97;
-        particle.vy = particle.vy * 0.97 + 0.012;
-        particle.life -= particle.decay;
-
-        if (particle.life <= 0) return;
-
-        const color = `hsl(${particle.hue} 100% 66%)`;
-        ctx.globalAlpha = Math.max(0, particle.life);
-        ctx.fillStyle = color;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, Math.max(0.1, particle.size * particle.life), 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      particles = particles.filter((particle) => particle.life > 0);
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-      ctx.globalCompositeOperation = 'source-over';
-      requestAnimationFrame(draw);
-    }
-
-    stage.addEventListener('pointermove', (event) => {
-      const rect = stage.getBoundingClientRect();
-      spawn(event.clientX - rect.left, event.clientY - rect.top);
-    });
-
-    new ResizeObserver(resize).observe(stage);
-    resize();
-    requestAnimationFrame(draw);
-  })();
 
   (() => {
     const stage = document.getElementById('constellationStage');

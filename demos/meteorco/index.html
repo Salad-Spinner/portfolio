@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>MeteorCo &amp; Cursor Trail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="MeteorCoScroll.css">
+<style>
+  html { height: 100%; scroll-behavior: smooth; }
+
+  body {
+    min-height: 100%;
+    background: #05070d url('sky.png') center / cover no-repeat fixed;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(77, 163, 255, 0.08), transparent 45%),
+      linear-gradient(180deg, rgba(3, 7, 18, 0.2), rgba(3, 7, 18, 0.7));
+    pointer-events: none;
+  }
+
+  .meteor-hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .meteor-hero h1 {
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(1.45rem, 6.5vw, 3.2rem);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    text-shadow:
+      0 0 18px rgba(77, 163, 255, 0.55),
+      0 0 45px rgba(77, 163, 255, 0.25);
+  }
+
+  .meteor-hero p {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: clamp(0.66rem, 1.8vw, 0.82rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .meteor-hero .meteor-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(5, 7, 13, 0.55);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .meteor-pill i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4da3ff;
+    box-shadow: 0 0 12px #4da3ff;
+  }
+
+  .reading-section {
+    --size: clamp(0.95rem, 3vw, 1.55rem);
+    position: relative;
+  }
+
+  .reading-sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    z-index: 2;
+  }
+
+  .reading-text {
+    max-width: 620px;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .reading-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .scene-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+
+  .scene-image.active-image { opacity: 1; }
+
+  .reading-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(3, 7, 18, 0.55), rgba(3, 7, 18, 0.78));
+    pointer-events: none;
+  }
+
+  .normal {
+    position: relative;
+    z-index: 1;
+    background: rgba(3, 7, 18, 0.85);
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .normal p {
+    max-width: 480px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: clamp(0.8rem, 2vw, 1rem);
+  }
+
+  .normal a {
+    color: #8fdcff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 520px) {
+    .meteor-hero h1 { font-size: 1.35rem; }
+    .meteor-hero p { font-size: 0.58rem; }
+    .meteor-pill { font-size: 0.54rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .scene-image { transition: none; }
+  }
+</style>
+<script>
+  window.CursorTrail = {
+    radius: 7,
+    spacing: 3.5,
+    maxDots: 55,
+    hold: 1800,
+    fade: 500,
+    flash: 5,
+    flashColor: '#4da3ff'
+  };
+</script>
+<script src="MeteorCoScroll.js"></script>
+<script src="cursor-trailMeteor.js"></script>
+</head>
+<body>
+  <div id="story-progress" aria-hidden="true"></div>
+
+  <section class="meteor-hero">
+    <h1>MeteorCo</h1>
+    <p>Launching brands into orbit</p>
+    <span class="meteor-pill"><i></i> Move your pointer · scroll to read</span>
+  </section>
+
+  <section class="reading-section" data-speed="3" data-pin="center" data-shimmer="true" data-blur="true" data-glow="true" data-size="3.5">
+    <div class="reading-sticky">
+      <p class="reading-text">Welcome to Meteor Co — launching brands into orbit. We design fast, resilient digital products and unforgettable brand experiences for space-minded companies. Ready to lift off? Contact us: hello@meteorco.example</p>
+    </div>
+    <div class="reading-media" aria-hidden="true">
+      <img class="scene-image active-image" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200" alt="">
+      <img class="scene-image" src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=1200" alt="">
+    </div>
+  </section>
+
+  <section class="normal">
+    <p>That is the MeteorCo scroll story. The cursor trail is running over the whole page — move your pointer anywhere in this panel.</p>
+  </section>
+</body>
+</html>

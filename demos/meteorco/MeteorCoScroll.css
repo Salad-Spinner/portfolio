@@ -1,0 +1,262 @@
+/*****************************************************************
+
+SCROLL READER CSS
+
+CUSTOMIZATION GUIDE:
+
+--inactive:
+    Colour of unread text
+
+--active:
+    Highlight colour
+
+--glow:
+    Highlight glow strength
+
+
+Try changing:
+
+font-size
+line-height
+background
+transition speeds
+
+
+*****************************************************************/
+:root {
+	--inactive:
+		rgba(255, 255, 255, .18);
+	--active:
+		white;
+	--glow:
+		rgba(255, 255, 255, .5);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background: #050505;
+	color: white;
+	font-family:
+		system-ui,
+		sans-serif;
+	overflow-x: hidden;
+}
+
+/**********************
+
+MAIN SECTION
+
+***********************/
+.reading-section {
+	position: relative;
+}
+
+.reading-sticky {
+	height: 100svh;
+	position: sticky;
+	top: 0;
+	display: flex;
+	align-items: center;
+	padding: 5vw;
+}
+
+/**********************
+
+POSITION OPTIONS
+
+***********************/
+.reading-section[data-pin="left"] .reading-sticky {
+	justify-content: flex-start;
+}
+
+.reading-section[data-pin="center"] .reading-sticky {
+	justify-content: center;
+}
+
+.reading-section[data-pin="right"] .reading-sticky {
+	justify-content: flex-end;
+}
+
+.reading-text {
+	max-width:
+		var(--width, 900px);
+	font-size:
+		var(--size, 3rem);
+	line-height: 1.7;
+	font-weight: 700;
+}
+
+.word {
+	display: inline-block;
+	color: var(--inactive);
+	transition:
+		color .25s ease,
+		filter .25s ease,
+		transform .25s ease,
+		text-shadow .25s ease;
+}
+
+/**********************
+
+ACTIVE WORD
+
+***********************/
+.word.active {
+	color: var(--active);
+}
+
+.reading-section[data-glow="true"] .word.active {
+	text-shadow:
+		0 0 12px var(--glow);
+}
+
+.reading-section[data-blur="true"] .word {
+	filter: blur(4px);
+}
+
+.reading-section[data-blur="true"] .word.active {
+	filter: blur(0);
+}
+
+.reading-section[data-shimmer="true"] .word.active {
+	background:
+		linear-gradient(90deg,
+			white,
+			#8fdcff,
+			white);
+	background-size:
+		200%;
+	animation:
+		shine .8s linear;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+@keyframes shine {
+	from {
+		background-position:
+			200%;
+	}
+
+	to {
+		background-position:
+			0%;
+	}
+}
+
+.normal {
+	height: 100svh;
+	display: grid;
+	place-items: center;
+	background: #222;
+}
+
+/****************************************************************
+
+MEDIA STORY MODE
+
+****************************************************************/
+.story-sticky {
+	height: 100svh;
+	display: flex;
+	align-items: center;
+	gap: 5vw;
+	padding: 5vw;
+}
+
+.story-content {
+	flex: 1;
+}
+
+.story-media {
+	flex: 1;
+}
+
+.story-media img,
+.story-media video {
+	width: 100%;
+	border-radius: 20px;
+	object-fit: cover;
+}
+
+/****************************************************************
+
+ACTIVE WORD MOTION
+
+****************************************************************/
+.word {
+	transform:
+		translateY(8px) scale(.98);
+	opacity: .2;
+}
+
+.word.active {
+	transform:
+		translateY(0) scale(1);
+	opacity: 1;
+}
+
+/****************************************************************
+
+HORIZONTAL MODE
+
+****************************************************************/
+.story-section[data-mode="horizontal"] {
+	height: 300svh;
+}
+
+.story-section[data-mode="horizontal"] .story-sticky {
+	overflow: hidden;
+}
+
+.story-section[data-mode="horizontal"] .story-content {
+	transform:
+		translateX(var(--move));
+}
+
+/****************************************************************
+
+TOP PROGRESS BAR
+
+****************************************************************/
+#story-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 4px;
+	background: white;
+	width: 0%;
+	z-index: 9999;
+}
+
+@media(max-width:700px) {
+	.story-sticky {
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.story-media {
+		width: 100%;
+	}
+
+	.story-text {
+		font-size: 1.6rem;
+	}
+}
+
+.scene-video {
+
+    width:100%;
+
+    height:auto;
+
+    display:block;
+
+    border-radius:20px;
+
+}
